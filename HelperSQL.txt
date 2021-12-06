@@ -1,0 +1,60 @@
+//ambil nomor urut
+
+SELECT SUBSTRING((SELECT kode_member FROM member),14,6)
+
+=============================================================================
+
+//ambil tanggal buat, no urut dari paling banyak
+
+SELECT kode_member, 
+	LENGTH(kode_member), 
+	SUBSTRING(kode_member,3,10) as tanggalbuat, 
+	SUBSTRING(kode_member,14,6) 
+FROM member 
+	ORDER by tanggalbuat ASC, LENGTH(kode_member) DESC
+
+=============================================================================
+
+//ambil tanggal buat, no urut dari paling banyak + penyesuaian tanggal + noUrut dari kecil ke besar
+
+SELECT kode_member, 
+	LENGTH(kode_member), 
+	SUBSTRING(kode_member,3,10) as tanggalBuat, 
+	CAST(SUBSTRING(kode_member,14,6) AS INT) as noUrut
+FROM member 
+	WHERE SUBSTRING(kode_member,3,10) = '2021-12-02'
+	ORDER by tanggalbuat ASC, noUrut ASC,LENGTH(kode_member) DESC
+
+=============================================================================
+
+//ambil produk toko spesifik admin
+SELECT produk.kode_produk as Kode_Produk, 
+	produk.nama as Nama_Produk,
+	produk.stok,
+	produk.hargasatuan,
+	admin.nama_toko 
+FROM (
+	(`dijual` INNER JOIN produk) 
+	INNER JOIN admin
+	) 
+WHERE(
+	(
+		dijual.kode_admin = admin.kode_admin) AND 
+	(
+		dijual.kode_produk = produk.kode_produk) AND 
+	(
+		dijual.kode_admin = ['kode_admin']) 
+)  
+GROUP BY dijual.kode_produk
+
+=============================================================================
+
+//ambil produk toko
+SELECT produk.kode_produk as Kode_Produk, 
+	produk.nama as Nama_Produk,
+	produk.stok,
+	produk.hargasatuan,
+    	produk.kadaluarsa,
+	admin.nama_toko 
+FROM ((`dijual` INNER JOIN produk) INNER JOIN admin)
+WHERE dijual.kode_produk = produk.kode_produk GROUP BY dijual.kode_produk
